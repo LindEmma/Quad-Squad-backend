@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const { Client } = require("@notionhq/client");
-const axios = require('axios');
 require('dotenv').config();
 
 const app = express();
