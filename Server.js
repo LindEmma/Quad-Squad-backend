@@ -6,7 +6,7 @@ require('dotenv').config();
 const app = express();
 
 app.use(cors());
-
+// key and id from env file
 const databasePeopleId = process.env.NOTION_PEOPLE_DATABASE_ID;
 const databaseProjectId = process.env.NOTION_PROJECT_DATABASE_ID;
 const databaseTimeReportID = process.env.NOTION_TIMEREPORTS_DATABASE_ID;
