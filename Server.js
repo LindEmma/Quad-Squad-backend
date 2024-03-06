@@ -18,7 +18,6 @@ app.post('/submitFormToNotion', async (req, res) => {
     const { employeID, password } = req.body;
     console.log('Received employeID:', employeID);
     console.log('Received password:', password);
-    // console.log('Received role:', userRole);
     try {
         const response = await notion.databases.query({
             database_id: databasePeopleId,
