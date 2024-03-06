@@ -6,44 +6,44 @@ require('dotenv').config();
 const app = express();
 
 app.use(cors());
+app.use(express.json());
 
 const databasePeopleId = process.env.NOTION_PEOPLE_DATABASE_ID;
-const databaseProjectId = process.env.NOTION_PROJECT_DATABASE_ID;
-const databaseTimeReportID = process.env.NOTION_TIMEREPORTS_DATABASE_ID;
+// const databaseProjectId = process.env.NOTION_PROJECT_DATABASE_ID;
+// const databaseTimeReportID = process.env.NOTION_TIMEREPORTS_DATABASE_ID;
 
 const notion =  new Client({auth: process.env.NOTION_API_KEY});
 
-app.get('/people',async (req,res)=>{
+app.post('/submitFormToNotion', async (req, res) => {
+    const { employeID, password } = req.body;
+    console.log('Received employeID:', employeID);
+    console.log('Received password:', password);
+    // console.log('Received role:', userRole);
     try {
         const response = await notion.databases.query({
-            database_id: databasePeopleId
+            database_id: databasePeopleId,
         });
 
-        res.json(response.results);
+        const user = response.results.find(user => {
+            const userEmployeID = user.properties.EmployeID.rich_text[0].plain_text;
+            const userPassword = user.properties.Password.rich_text[0].plain_text;
+            // const userUserRole = user.properties.Role.multi_select[0].name; 
+            return userEmployeID === employeID && userPassword === password;
+        });
+
+        if (user) {
+            console.log('Login success!')
+            res.status(200).json(user);
+        } else {
+            console.log('Login failed: Incorrect employeID or password');
+            res.status(401).send("Unauthorized");
+        }
     } catch (error) {
-        console.log('Error ',error);
+        console.error('Error:', error);
+        return res.status(500).send("Error");
     }
 });
-app.get('/project', async (req,res)=>{
-    try {
-        const response = await notion.databases.query({
-            database_id: databaseProjectId
-        });
-        res.json(response.results)
-    } catch (error) {
-        console.log('Error', error)
-    }
-});
-app.get('/timereports', async (req,res)=>{
-    try {
-        const response = await notion.databases.query({
-            database_id: databaseTimeReportID
-        });
-        res.json(response.results)
-    } catch (error) {
-        console.log('Error', error)
-    }
-})
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
