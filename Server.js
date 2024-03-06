@@ -6,6 +6,7 @@ require('dotenv').config();
 const app = express();
 
 app.use(cors());
+app.use(express.json());
 
 const databasePeopleId = process.env.NOTION_PEOPLE_DATABASE_ID;
 // const databaseProjectId = process.env.NOTION_PROJECT_DATABASE_ID;
@@ -17,21 +18,25 @@ app.post('/submitFormToNotion', async (req, res) => {
     const { employeID, password } = req.body;
     console.log('Received employeID:', employeID);
     console.log('Received password:', password);
+
     try {
         const response = await notion.databases.query({
             database_id: databasePeopleId,
         });
-
-        const user = response.results.find(user => {
+        const users = response.results.map(user => {
             const userEmployeID = user.properties.EmployeID.rich_text[0].plain_text;
             const userPassword = user.properties.Password.rich_text[0].plain_text;
-            // const userUserRole = user.properties.Role.multi_select[0].name; 
-            return userEmployeID === employeID && userPassword === password;
+            const roles = user.properties.Role.multi_select.map(role => role.name); 
+            return { userEmployeID, userPassword, roles };
+        });
+        
+        const user = users.find(user => {
+            return user.userEmployeID === employeID && user.userPassword === password;
         });
 
         if (user) {
             console.log('Login success!')
-            res.status(200).json(user);
+            res.status(200).json({ userRoles: user.roles }); 
         } else {
             console.log('Login failed: Incorrect employeID or password');
             res.status(401).send("Unauthorized");
