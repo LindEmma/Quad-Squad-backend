@@ -14,6 +14,9 @@ const databasePeopleId = process.env.NOTION_PEOPLE_DATABASE_ID;
 
 const notion =  new Client({auth: process.env.NOTION_API_KEY});
 
+let loggedInUser = null;
+
+//Post request to recieve employeid and password from form
 app.post('/submitFormToNotion', async (req, res) => {
     const { employeID, password } = req.body;
     console.log('Received employeID:', employeID);
@@ -23,20 +26,19 @@ app.post('/submitFormToNotion', async (req, res) => {
         const response = await notion.databases.query({
             database_id: databasePeopleId,
         });
-        const users = response.results.map(user => {
-            const userEmployeID = user.properties.EmployeID.rich_text[0].plain_text;
-            const userPassword = user.properties.Password.rich_text[0].plain_text;
-            const roles = user.properties.Role.multi_select.map(role => role.name); 
-            return { userEmployeID, userPassword, roles };
-        });
-        
-        const user = users.find(user => {
-            return user.userEmployeID === employeID && user.userPassword === password;
-        });
+       const user = response.results.find(user => {
+        const userEmployeID = user.properties.EmployeID.rich_text[0].plain_text;
+        const userPassword = user.properties.Password.rich_text[0].plain_text;
+        return userEmployeID === employeID && userPassword === password;
+    });
 
         if (user) {
+            loggedInUser = {
+                userName: user.properties.Name.title[0].plain_text,
+                userRole: user.properties.Role.multi_select.map(role => role.name)
+            };
             console.log('Login success!')
-            res.status(200).json({ userRoles: user.roles }); 
+            res.status(200).json({ message: 'Login success!' }); 
         } else {
             console.log('Login failed: Incorrect employeID or password');
             res.status(401).send("Unauthorized");
@@ -46,7 +48,18 @@ app.post('/submitFormToNotion', async (req, res) => {
         return res.status(500).send("Error");
     }
 });
-
+app.get('/usernameAndRole', async (req,res)=>{
+    try {
+        if(loggedInUser){
+            console.log('User info retrieved:', loggedInUser);
+            res.status(200).json(loggedInUser);
+        }
+       
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).send("Error");
+    }
+})
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
