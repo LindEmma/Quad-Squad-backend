@@ -12,7 +12,7 @@ const databasePeopleId = process.env.NOTION_PEOPLE_DATABASE_ID;
 // const databaseProjectId = process.env.NOTION_PROJECT_DATABASE_ID;
 // const databaseTimeReportID = process.env.NOTION_TIMEREPORTS_DATABASE_ID;
 
-const notion =  new Client({auth: process.env.NOTION_API_KEY});
+const notion =  new Client({auth: process.env.NOTION_ACCESS_TOKEN});
 
 let loggedInUser = null;
 
@@ -27,8 +27,8 @@ app.post('/submitFormToNotion', async (req, res) => {
             database_id: databasePeopleId,
         });
        const user = response.results.find(user => {
-        const userEmployeID = user.properties.EmployeID.rich_text[0].plain_text;
-        const userPassword = user.properties.Password.rich_text[0].plain_text;
+        const userEmployeID = user.properties.EmployeID?.rich_text[0]?.plain_text;
+        const userPassword = user.properties.Password?.rich_text[0]?.plain_text;
         return userEmployeID === employeID && userPassword === password;
     });
 
