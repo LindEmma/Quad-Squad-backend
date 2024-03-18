@@ -9,7 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const authToken = "secret_rjyMzhW412u9tpam3qCpkPbDXUG0z2V2PEluoKnZ1nN";
+const authToken = "secret_zwHckMzX7JjtvETKIugWlzTbINQSAUynzDcJxzHxMpV";
 const notionDbID = "a00eba2577284abf93bd7f0e5dbc3340";
 const NOTION_API_BASE_URL = "https://api.notion.com/v1";
 

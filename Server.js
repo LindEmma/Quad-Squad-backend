@@ -12,7 +12,7 @@ const databasePeopleId = process.env.NOTION_PEOPLE_DATABASE_ID;
 // const databaseProjectId = process.env.NOTION_PROJECT_DATABASE_ID;
 // const databaseTimeReportID = process.env.NOTION_TIMEREPORTS_DATABASE_ID;
 
-const notion =  new Client({auth: "secret_rjyMzhW412u9tpam3qCpkPbDXUG0z2V2PEluoKnZ1nN"});
+const notion =  new Client({auth: "secret_zwHckMzX7JjtvETKIugWlzTbINQSAUynzDcJxzHxMpV"});
 
 let loggedInUser = null;
 
