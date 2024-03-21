@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const databasePeopleId = process.env.NOTION_PEOPLE_DATABASE_ID;
+const databasePeopleId = "69e661b605d9467e9e899c55c5ed0ae1"
 // const databaseProjectId = process.env.NOTION_PROJECT_DATABASE_ID;
 // const databaseTimeReportID = process.env.NOTION_TIMEREPORTS_DATABASE_ID;
 
@@ -27,15 +27,17 @@ app.post("/submitFormToNotion", async (req, res) => {
       database_id: databasePeopleId,
     });
     const user = response.results.find((user) => {
+      const userID = user.id;
       const userEmployeID = user.properties.EmployeID?.rich_text[0]?.plain_text;
       const userPassword = user.properties.Password?.rich_text[0]?.plain_text;
-      return userEmployeID === employeID && userPassword === password;
+      return userEmployeID === employeID && userPassword === password && userID;
     });
 
     if (user) {
       loggedInUser = {
         userName: user.properties.Name.title[0].plain_text,
         userRole: user.properties.Role.multi_select.map((role) => role.name),
+        userId : user.id,
       };
       console.log("Login success!");
       res.status(200).json({ message: "Login success!" });
@@ -59,6 +61,7 @@ app.get("/usernameAndRole", async (req, res) => {
     return res.status(500).send("Error");
   }
 });
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
