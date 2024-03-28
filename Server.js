@@ -39,6 +39,9 @@ app.post("/submitFormToNotion", async (req, res) => {
         userRole: user.properties.Role.multi_select.map((role) => role.name),
         userId : user.id,
       };
+
+      localStorage.setItem("userData", JSON.stringify(loggedInUser));
+      
       console.log("Login success!");
       res.status(200).json({ message: "Login success!" });
     } else {
