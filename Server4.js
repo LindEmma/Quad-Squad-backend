@@ -9,7 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const authToken = "secret_wE9pW5CmFqoJCsy3kyZTdqyVj7MGfDuKHu5ndKHIfwP";
+const authToken = process.env.NOTION_API_KEY;
 const databasePeopleId = process.env.NOTION_PEOPLE_DATABASE_ID;
 const databaseTimeReportsId = process.env.NOTION_TIMEREPORTS_DATABASE_ID;
 const databaseProjectsId = process.env.NOTION_PROJECT_DATABASE_ID;

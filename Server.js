@@ -8,11 +8,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const databasePeopleId = "69e661b605d9467e9e899c55c5ed0ae1"
-// const databaseProjectId = process.env.NOTION_PROJECT_DATABASE_ID;
-// const databaseTimeReportID = process.env.NOTION_TIMEREPORTS_DATABASE_ID;
+const databasePeopleId = process.env.NOTION_PEOPLE_DATABASE_ID;
+const notionKey = process.env.NOTION_API_KEY;
 
-const notion = new Client({ auth: "secret_wE9pW5CmFqoJCsy3kyZTdqyVj7MGfDuKHu5ndKHIfwP"});
+const notion = new Client({ auth: notionKey });
 
 let loggedInUser = null;
 
@@ -37,11 +36,9 @@ app.post("/submitFormToNotion", async (req, res) => {
       loggedInUser = {
         userName: user.properties.Name.title[0].plain_text,
         userRole: user.properties.Role.multi_select.map((role) => role.name),
-        userId : user.id,
+        userId: user.id,
       };
 
-      localStorage.setItem("userData", JSON.stringify(loggedInUser));
-      
       console.log("Login success!");
       res.status(200).json({ message: "Login success!" });
     } else {
