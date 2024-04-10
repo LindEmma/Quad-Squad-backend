@@ -30,7 +30,7 @@ app.post("/NotionAPIPost", async (req, res) => {
         Hours: { number: parseInt(Hours, 10) },
         Note: { title: [{ text: { content: Note } }] },
         Date: { date: { start: Date } },
-        // Person: { relation: [{ id: UserId  }] },
+        Person: { relation: [{ id: UserId  }] },
         Projects: { relation: [{ id: ProjectId }] },
       },
     });
